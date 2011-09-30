@@ -1,0 +1,911 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US"><head profile="http://gmpg.org/xfn/11">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>   SSH Public Key Based Authentication – Howto</title>
+
+<link rel="stylesheet" href="ssh-public-key-based-authentication-how-to_files/ssbblog_cv2.css" type="text/css" media="screen, projection">
+<!--[if lte IE 8]><link rel="stylesheet" href="http://files.cyberciti.biz/assets/blog/ssbie.css" type="text/css" media="screen, projection" /><![endif]-->
+<link rel="alternate" type="application/rss+xml" title="nixCraft RSS Feed" href="http://feeds.cyberciti.biz/Nixcraft-LinuxFreebsdSolarisTipsTricks">
+<link rel="pingback" href="http://www.cyberciti.biz/tips/xmlrpc.php">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.cyberciti.biz/tips/xmlrpc.php?rsd">
+<script src="ssh-public-key-based-authentication-how-to_files/ga.js" async="" type="text/javascript"></script><script src="ssh-public-key-based-authentication-how-to_files/a" type="text/javascript"></script><script src="ssh-public-key-based-authentication-how-to_files/a_002" type="text/javascript"></script>
+<link rel="shortcut icon" href="http://files.cyberciti.biz/assets/i/favicon.ico" type="image/x-icon">
+<meta name="ROBOTS" content="NOARCHIVE">
+<link rel="alternate" type="application/rss+xml" title="nixCraft » SSH Public Key Based Authentication – Howto Comments Feed" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html/feed">
+<script type="text/javascript" src="ssh-public-key-based-authentication-how-to_files/l10n.js"></script>
+<script type="text/javascript" src="ssh-public-key-based-authentication-how-to_files/comment-reply.js"></script>
+
+<meta name="description" content="Explains ssh key based authentication under Linux / UNIX / OS X / BSD operating systems along with ssh-agent and keychain utilities. ">
+</head>
+<body class="custom">
+<div id="container">
+<div id="page">
+<ul class="menu">
+<li><a href="http://www.cyberciti.biz/tips/about-us" title="About us">About</a></li>
+<li><a href="http://nixcraft.com/" title="Linux / UNIX Tech Support Forum">Forum</a></li>
+<li><a href="http://www.cyberciti.biz/faq/" title="Linux / UNIX Mini Howtos and FAQs">Howtos &amp; FAQs</a></li>
+<li><a href="http://www.cyberciti.biz/low.html?utm_source=graphicsversion&amp;utm_campaign=blog&amp;utm_medium=link" title="See site in low graphics bandwidth friendly mode">Low graphics</a></li>
+<li><a href="http://bash.cyberciti.biz/" title="Linux/UNIX Shell scripts">Shell Scripts</a></li>
+<li class="rss"><a href="http://feeds.cyberciti.biz/Nixcraft-LinuxFreebsdSolarisTipsTricks" title="nixCraft RSS Feed" rel="nofollow">RSS/Feed</a></li>
+</ul>
+	<div id="header">
+<div id="leaderboard"><div id="lbtop"><div id="adstopage"><div id="load-adstopage">
+<script type="text/javascript"><!--// <![CDATA[
+    OA_show(4);
+// ]]> --></script><script type="text/javascript"><!--
+e9 = new Object();
+e9.size = "728x90,468x60";
+//--></script>
+<script type="text/javascript" src="ssh-public-key-based-authentication-how-to_files/tags.js"></script><script type="text/javascript" src="ssh-public-key-based-authentication-how-to_files/displayAd.js"></script><center><script type="text/javascript" src="ssh-public-key-based-authentication-how-to_files/j.js"></script><iframe src="ssh-public-key-based-authentication-how-to_files/adtag.html" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" allowtransparency="true" frameborder="0" height="90" scrolling="no" width="728"></iframe>
+<iframe src="ssh-public-key-based-authentication-how-to_files/frame.html" style="visibility: hidden;" marginheight="0" marginwidth="0" frameborder="0" height="0" scrolling="no" width="0"></iframe><iframe src="ssh-public-key-based-authentication-how-to_files/frame_002.html" style="visibility: hidden;" marginheight="0" marginwidth="0" frameborder="0" height="0" scrolling="no" width="0"></iframe><iframe src="ssh-public-key-based-authentication-how-to_files/frm.html" style="display: none; visibility: hidden;" frameborder="0" height="0" width="0"></iframe><iframe src="ssh-public-key-based-authentication-how-to_files/adTag1.html" style="visibility: hidden;" marginheight="0" marginwidth="0" frameborder="0" height="0" scrolling="no" width="0"></iframe></center>
+
+<div id="beacon_72a2d9a13c" style="position: absolute; left: 0px; top: 0px; visibility: hidden;"><img src="ssh-public-key-based-authentication-how-to_files/lg.gif" alt="" style="width: 0px; height: 0px;" height="0" width="0"></div>
+<noscript><a target='_blank' href='http://simplyguide.com/k/www/delivery/ck.php?n=21e2006'><img border='0' alt='' src='http://simplyguide.com/k/www/delivery/avw.php?zoneid=4&amp;n=21e2006' /></a></noscript>
+</div></div></div></div><div id="crumbslogo"><a href="http://www.cyberciti.biz/" title="Home page">nixcraft - insight into linux admin work</a></div>	</div>
+	<div id="content_box">
+		<div id="content" class="hfeed">
+
+			<div class="post-566 post type-post status-publish format-standard hentry category-centos category-debian-linux category-freebsd category-gentoo-linux category-howto category-linux category-linux-desktop category-linux-laptop category-openbsd category-redhatfedora-linux category-solaris category-suse-linux category-sys-admin category-tips category-ubuntu-linux category-unix tag-cryptographic-key tag-freebsd tag-keygen tag-linux tag-passphrase tag-private-key tag-public-key tag-rsa tag-scp tag-scp-command tag-ssh-connections tag-ssh-keys tag-ssh-add-command tag-ssh-keygen-command tag-unix tag-unix-workstation tag-workstation-login post_box top" id="post-566">
+				<div class="headline_area">
+					<h1 class="entry-title">SSH Public Key Based Authentication – Howto</h1>
+					<p class="headline_meta">by <span class="author vcard fn">Vivek Gite</span> on <abbr class="published" title="2004-05-08">May 8, 2004</abbr> · <span><a href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html#comments" rel="nofollow">31 comments</a></span></p>
+				</div>
+				<div class="format_text entry-content">
+<div style="float:right;margin-top:0px;margin-left:5px;"><a href="http://www.cyberciti.biz/tips/category/linux" title="See all GNU/Linux related tips/articles"><img src="ssh-public-key-based-authentication-how-to_files/linux-logo.png" border="0"></a></div>
+<p><span class="drop_cap">T</span>he SSH protocol is recommended for 
+remote login and remote file transfer which provides confidentiality and
+ security for data exchanged between two computer systems, through the 
+use of public key cryptography. The OpenSSH server provides this kind of
+ setup under Linux. It is installed by default. This how-to covers 
+generating and using ssh keys for automated usage such as:</p>
+<ol>
+<li>Automated Login using the shell scripts.</li>
+<li>Making backups.</li>
+<li>Run commands from the shell prompt etc.</li>
+</ol>
+<p><span id="more-566"></span></p>
+<div style="float:right;margin-top:0px;margin-left:5px;"><a href="http://www.cyberciti.biz/tips/category/unix" title="See all UNIX(R) related articles/tips"><img src="ssh-public-key-based-authentication-how-to_files/unix-logo.gif" border="0"></a></div>
+<h2>Task: Generating SSH Keys</h2>
+<p>First, log on to your workstation ( for example log on to workstation
+ called admin.fbsd.nixcraft.org  as vivek user). Please refer the 
+following sample setup - You will be log in, on your local system, AS 
+THE USER you wish to make passwordless ssh connections.</p>
+<div id="attachment_6858" class="wp-caption alignnone" style="width: 385px">
+	<a href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html/sshsetup" rel="attachment wp-att-6858"><img src="ssh-public-key-based-authentication-how-to_files/sshsetup.png" alt="Fig.01 ssh key based authentication" title="ssh key based authentication" class="size-full wp-image-6858" height="282" width="385"></a>
+	<p class="wp-caption-text">ssh key based authentication</p>
+</div>
+<p>Create the cryptographic Key on FreeBSD / Linux / UNIX workstation, enter:<br>
+<code>ssh-keygen -t rsa</code><br>
+Assign the pass phrase (press [enter] key twice if you don't want a 
+passphrase). It will create 2 files in ~/.ssh directory as follows:</p>
+<ul>
+<li>~/.ssh/id_rsa :  identification (private) key</li>
+<li>~/.ssh/id_rsa.pub : public key</li>
+</ul>
+<p>Use scp to copy the id_rsa.pub (public key) to <em>rh9linux.nixcraft.org</em> server as authorized_keys2  file, this is know as Installing the public key to server.<br>
+<code>scp .ssh/id_rsa.pub vivek@rh9linux.nixcraft.org:.ssh/authorized_keys2</code><br>
+From FreeBSD workstation login to server:<br>
+<code>ssh rh9linux.nixcraft.org</code><br>
+Changing the pass-phrase on workstation (if needed):<br>
+<code>ssh-keygen -p</code><br>
+Use of ssh-agent to avoid continues pass-phrase typing<br>
+At freebsd workstation type:<br>
+<code>ssh-agent $BASH<br>
+ssh-add</code><br>
+Type your pass-phrase</p>
+<p>Now ssh server will not use prompt for the password. Above two 
+commands can be added to your ~/.bash_profile file so that as soon as 
+you login into workstation you can set the agent.</p>
+<h2>Deleting the keys hold by ssh-agent</h2>
+<p>To list keys, enter:<br>
+<code>ssh-add -l</code><br>
+To delete all keys, enter:<br>
+<code>ssh-add -D</code><br>
+To delete specific key, enter:<br>
+<code>ssh-add -d key</code></p>
+<h4>See also:</h4>
+<ul>
+<li>         <a href="http://www.cyberciti.biz/faq/ssh-passwordless-login-with-keychain-for-scripts/">keychain: Set Up Secure Passwordless SSH Access For Backup Scripts</a></li>
+<li>         <a href="http://www.cyberciti.biz/faq/noninteractive-shell-script-ssh-password-provider/">sshpass: Login To SSH Server / Provide SSH Password Using A Shell Script</a></li>
+<li>man pages sshd and ssh</li>
+</ul>
+<h4>Featured Articles:</h4>
+                <ul> 
+        <li><a href="http://www.cyberciti.biz/tips/top-linux-monitoring-tools.html">20 Linux System Monitoring Tools Every SysAdmin Should Know</a></li>
+        <li><a href="http://www.cyberciti.biz/tips/linux-security.html">20 Linux Server Hardening Security Tips</a></li>
+        <li><a href="http://www.cyberciti.biz/tips/my-10-unix-command-line-mistakes.html">My 10 UNIX Command Line Mistakes</a></li>
+        <li><a href="http://www.cyberciti.biz/tips/linux-laptop.html">The Novice Guide To Buying A Linux Laptop</a> <img style="vertical-align: text-top; padding-left: 1px;" src="ssh-public-key-based-authentication-how-to_files/new_fa.png" alt="" border="0"></li>
+        <li><a href="http://www.cyberciti.biz/tips/10-greatest-open-source-software-of-2009.html">10 Greatest Open Source Software Of 2009</a></li>
+        <li><a href="http://www.cyberciti.biz/tips/download-email-client-for-linux-mac-osx-windows.html">Top 5 Email Client For Linux, Mac OS X, and Windows Users</a></li>
+        <li><a href="http://www.cyberciti.biz/tips/linux-unix-bsd-openssh-server-best-practices.html">Top 20 OpenSSH Server Best Security Practices </a></li>
+        <li><a href="http://www.cyberciti.biz/tips/open-source-project-management-software.html">Top 10 Open Source Web-Based Project Management Software</a></li>
+        <li><a href="http://www.cyberciti.biz/faq/top5-linux-video-editing-system-software/">Top 5 Linux Video Editor Software</a></li>
+                </ul>
+        				</div>
+			</div>
+
+			<div id="comments">
+				<div id="comments_intro" class="comments_intro">
+					<p><span class="bracket">{</span> <span>31</span> comments… read them below or <a href="#respond" rel="nofollow">add one</a> <span class="bracket">}</span></p>
+				</div>
+
+				<dl id="comment_list">
+					<dt class="comment even thread-even depth-1" id="comment-19004">
+<span class="comment_num"><a href="#comment-19004" title="Permalink to this comment" rel="nofollow">1</a></span>
+<span class="comment_author">Ashish</span>
+<span class="comment_time">May 25, 2004</span>
+
+					</dt>
+					<dd class="comment even thread-even depth-1">
+<div class="format_text" id="comment-body-19004">
+<p>Hi Vivek Sir,</p>
+<p>This is Ashish here. Yes… I caught you..<br>
+It very nice to see you once again. Where are you right now?? In india?? Wanted to meet you..<br>
+Now we are expecting some good technical documents from you as usual. Just now finished LLST written by you. </p>
+<p>If possible please mail me at <a href="mailto:ashish_r_pathak@yahoo.com">ashish_r_pathak@yahoo.com</a></p>
+<p>Thanks and Regards,<br>
+/Ashish Pathak.<br>
+Pune, India.</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=19004#respond" onclick='return addComment.moveForm("comment-body-19004", "19004", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment odd alt thread-odd thread-alt depth-1" id="comment-19005">
+<span class="comment_num"><a href="#comment-19005" title="Permalink to this comment" rel="nofollow">2</a></span>
+<span class="comment_author">Kevin</span>
+<span class="comment_time">July 12, 2004</span>
+
+					</dt>
+					<dd class="comment odd alt thread-odd thread-alt depth-1">
+<div class="format_text" id="comment-body-19005">
+<p>Hi Vivek,</p>
+<p>I am kevin here from mumbai.  Thanks for this article on SSH. Also i 
+liked your Shell programming tutorial.  If possible can you give me some
+ examples on Local and remote port forwarding techniques on SSH.</p>
+<p>Best regards,<br>
+Kevin</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=19005#respond" onclick='return addComment.moveForm("comment-body-19005", "19005", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment even thread-even depth-1" id="comment-19006">
+<span class="comment_num"><a href="#comment-19006" title="Permalink to this comment" rel="nofollow">3</a></span>
+<span class="comment_author">Anonymous</span>
+<span class="comment_time">October 3, 2004</span>
+
+					</dt>
+					<dd class="comment even thread-even depth-1">
+<div class="format_text" id="comment-body-19006">
+<p>Hi Vivek</p>
+<p>this is Amit Shiknis here from Pune. Where are you now?How are you? i just gone through SSH docs its really very nice article. </p>
+<p>Hope you will be fine. if possible mail me on <a href="mailto:amitshiknis@vsnl.net">amitshiknis@vsnl.net</a></p>
+<p>regards<br>
+Amit</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=19006#respond" onclick='return addComment.moveForm("comment-body-19006", "19006", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment odd alt thread-odd thread-alt depth-1" id="comment-19007">
+<span class="comment_num"><a href="#comment-19007" title="Permalink to this comment" rel="nofollow">4</a></span>
+<span class="comment_author">Vivek</span>
+<span class="comment_time">August 3, 2005</span>
+
+					</dt>
+					<dd class="comment odd alt thread-odd thread-alt depth-1">
+<div class="format_text" id="comment-body-19007">
+<p>Kevin,<br>
+See <a href="http://www.cyberciti.biz/nixcraft/vivek/blogger/2005/08/linux-forwarding-ports-mail-traffic.html" rel="nofollow">url<br>
+</a> for Local and remote port forwarding techniques on SSH:</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=19007#respond" onclick='return addComment.moveForm("comment-body-19007", "19007", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment even thread-even depth-1" id="comment-129947">
+<span class="comment_num"><a href="#comment-129947" title="Permalink to this comment" rel="nofollow">5</a></span>
+<span class="comment_author">GV</span>
+<span class="comment_time">May 2, 2007</span>
+
+					</dt>
+					<dd class="comment even thread-even depth-1">
+<div class="format_text" id="comment-body-129947">
+<p>Hello, </p>
+<p>I installed openSSH client on windows. </p>
+<p>Create a public key using the command </p>
+<p>ssh-keygen -t rsa </p>
+<p>Copied the key to the unix box using the command </p>
+<p>scp .ssh/id_rsa.pub user@hostname:.ssh/authorized_keys </p>
+<p>changed the permissions on authorized_keys<br>
+chmod 600 </p>
+<p>The USERNAME on the windows and unix box are the same. </p>
+<p>When I try to run the remote script using ssh </p>
+<p>ssh user@hostname scriptname </p>
+<p>It Prompts me for the PASSWORD. I am not sure what  am I doing wrong here. Any help on this is much appreciated. </p>
+<p>Thanks<br>
+GV</p>
+<p>I am including the client side trace when I used ssh below. </p>
+<p>C:\Documents and Settings\gvarada\.ssh&gt;ssh -v stlap08d whoami<br>
+OpenSSH_3.8.1p1, OpenSSL 0.9.7d 17 Mar 2004<br>
+debug1: Reading configuration data /etc/ssh_config<br>
+debug1: Connecting to stlap08d [172.19.1.24] port 22.<br>
+debug1: Connection established.<br>
+debug1: identity file /home/gvarada/.ssh/identity type -1<br>
+debug1: identity file /home/gvarada/.ssh/id_rsa type 1<br>
+debug1: identity file /home/gvarada/.ssh/id_dsa type -1<br>
+debug1: Remote protocol version 2.0, remote software version OpenSSH_4.1<br>
+debug1: match: OpenSSH_4.1 pat OpenSSH*<br>
+debug1: Enabling compatibility mode for protocol 2.0<br>
+debug1: Local version string SSH-2.0-OpenSSH_3.8.1p1<br>
+debug1: SSH2_MSG_KEXINIT sent<br>
+debug1: SSH2_MSG_KEXINIT received<br>
+debug1: kex: server-&gt;client aes128-cbc hmac-md5 none<br>
+debug1: kex: client-&gt;server aes128-cbc hmac-md5 none<br>
+debug1: SSH2_MSG_KEX_DH_GEX_REQUEST(1024</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=129947#respond" onclick='return addComment.moveForm("comment-body-129947", "129947", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment odd alt thread-odd thread-alt depth-1" id="comment-138420">
+<span class="comment_num"><a href="#comment-138420" title="Permalink to this comment" rel="nofollow">6</a></span>
+<span class="comment_author">Jon</span>
+<span class="comment_time">May 24, 2007</span>
+
+					</dt>
+					<dd class="comment odd alt thread-odd thread-alt depth-1">
+<div class="format_text" id="comment-body-138420">
+<p>Your method of not giving a pass phrase is <i>convenient</i> but not really <i>secure (IMHO). Much better to create a key with a pass phrase, and use  <code>ssh-add</code> to enter the pass phrase ONCE PER SESSION. That is, before you ssh to the remote machine, run <code>ssh-add</code>
+ which will prompt you for the passphrase. For the rest of the session, 
+ssh-add will authenticate for future ssh connections, which are in 
+effect ‘password-less’</i></p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=138420#respond" onclick='return addComment.moveForm("comment-body-138420", "138420", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment even thread-even depth-1" id="comment-138421">
+<span class="comment_num"><a href="#comment-138421" title="Permalink to this comment" rel="nofollow">7</a></span>
+<span class="comment_author">Jon</span>
+<span class="comment_time">May 24, 2007</span>
+
+					</dt>
+					<dd class="comment even thread-even depth-1">
+<div class="format_text" id="comment-body-138421">
+<p>to the moderator: I withdraw my previous comment, the post does include ssh-add, but I had not read it thoroughly</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=138421#respond" onclick='return addComment.moveForm("comment-body-138421", "138421", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment odd alt thread-odd thread-alt depth-1" id="comment-140300">
+<span class="comment_num"><a href="#comment-140300" title="Permalink to this comment" rel="nofollow">8</a></span>
+<span class="comment_author">Gabriel Menini</span>
+<span class="comment_time">June 26, 2007</span>
+
+					</dt>
+					<dd class="comment odd alt thread-odd thread-alt depth-1">
+<div class="format_text" id="comment-body-140300">
+<p>Nice tip. Thanks.</p>
+<p>Now I did the same for an OpenSSH server which listen on port 22000. 
+Actually, there’s a firewall listening no that port, which redirects the
+ incoming traffic to a LAN’s OpenSSH server.</p>
+<p>I’ve copied the key to the /home/user/.ssh/authorizedkeys but the client doesn’t connect without prompting for the password…</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=140300#respond" onclick='return addComment.moveForm("comment-body-140300", "140300", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment even thread-even depth-1" id="comment-140517">
+<span class="comment_num"><a href="#comment-140517" title="Permalink to this comment" rel="nofollow">9</a></span>
+<span class="comment_author">Arul</span>
+<span class="comment_time">July 18, 2007</span>
+
+					</dt>
+					<dd class="comment even thread-even depth-1">
+<div class="format_text" id="comment-body-140517">
+<p>Hi, I am new to SSH. Can you tell me how can I automate connecting to
+ remote unix boxes using SSH  through a shell script and the SSH 
+connections should take the password at runtime possibly using a config 
+file</p>
+<p>something like</p>
+<p>cat server_repo.txt:<br>
+abc_server abc/def</p>
+<p>where abc_server – unix box<br>
+abc – username<br>
+def – password</p>
+<p>Note – I dont want to use “Passwordless Connectivity”</p>
+<p>Thanks,<br>
+Arul.</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=140517#respond" onclick='return addComment.moveForm("comment-body-140517", "140517", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment odd alt thread-odd thread-alt depth-1" id="comment-141012">
+<span class="comment_num"><a href="#comment-141012" title="Permalink to this comment" rel="nofollow">10</a></span>
+<span class="comment_author">BusyBecky</span>
+<span class="comment_time">September 5, 2007</span>
+
+					</dt>
+					<dd class="comment odd alt thread-odd thread-alt depth-1">
+<div class="format_text" id="comment-body-141012">
+<p>Hi,</p>
+<p>Why is it mandatory to have the same username on both source and target servers?<br>
+Is there any workaround to this limitation?</p>
+<p>Thnx.</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=141012#respond" onclick='return addComment.moveForm("comment-body-141012", "141012", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment byuser comment-author-administrator bypostauthor even thread-even depth-1" id="comment-141013">
+<span class="comment_num"><a href="#comment-141013" title="Permalink to this comment" rel="nofollow">11</a></span>
+<span class="comment_author">vivek</span>
+<span class="comment_time">September 5, 2007</span>
+
+					</dt>
+					<dd class="comment byuser comment-author-administrator bypostauthor even thread-even depth-1">
+<div class="format_text" id="comment-body-141013">
+<p>No it is not required. You can use user name tom on client and username jerry on server.</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=141013#respond" onclick='return addComment.moveForm("comment-body-141013", "141013", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment odd alt thread-odd thread-alt depth-1" id="comment-143836">
+<span class="comment_num"><a href="#comment-143836" title="Permalink to this comment" rel="nofollow">12</a></span>
+<span class="comment_author">surendra kumar</span>
+<span class="comment_time">May 21, 2008</span>
+
+					</dt>
+					<dd class="comment odd alt thread-odd thread-alt depth-1">
+<div class="format_text" id="comment-body-143836">
+<p>hi vivek,<br>
+i think this method will not work for different users<br>
+ie what i want to say is user1 can not login to user2 account with out 
+password in to server can u conform it and revert back again?<br>
+thanks in advance<br>
+surendra</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=143836#respond" onclick='return addComment.moveForm("comment-body-143836", "143836", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment even thread-even depth-1" id="comment-145035">
+<span class="comment_num"><a href="#comment-145035" title="Permalink to this comment" rel="nofollow">13</a></span>
+<span class="comment_author">Shankar</span>
+<span class="comment_time">September 17, 2008</span>
+
+					</dt>
+					<dd class="comment even thread-even depth-1">
+<div class="format_text" id="comment-body-145035">
+<p>Hi Vivek,</p>
+<p>In your step 3 as below. It will prompt for the password of user 
+vivek on  rh9linux.nixcraft.org to complete the copying of the public 
+key.</p>
+<p>$ scp .ssh/id_rsa.pub <a href="mailto:vivek@rh9linux.nixcraft.org">vivek@rh9linux.nixcraft.org</a>:.ssh/authorized_keys2</p>
+<p>Is there any method by which I can pass this value non-interactively.</p>
+<p>Thanks<br>
+Shankar</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=145035#respond" onclick='return addComment.moveForm("comment-body-145035", "145035", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment odd alt thread-odd thread-alt depth-1" id="comment-145299">
+<span class="comment_num"><a href="#comment-145299" title="Permalink to this comment" rel="nofollow">14</a></span>
+<span class="comment_author">Brendan</span>
+<span class="comment_time">October 18, 2008</span>
+
+					</dt>
+					<dd class="comment odd alt thread-odd thread-alt depth-1">
+<div class="format_text" id="comment-body-145299">
+<p>Regarding using scp to copy is_rsa.pub into authorized_keys2, I don’t
+ believe this to be a good idea if there is any chance that you need 
+more than one user or public key to have access to the server.</p>
+<p>In this case, rather do the following:<br>
+ssh <a href="mailto:vivek@rh9linux.nixcraft.org">vivek@rh9linux.nixcraft.org</a> “cat &gt;&gt; .ssh/authorized_keys2″ &lt; .ssh/id_rsa.pub</p>
+<p>This will pipe the public key through the ssh session and append it 
+to the existing file if it exists. Otherwise it will create the file 
+with the contents of your id_rsa.pub</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=145299#respond" onclick='return addComment.moveForm("comment-body-145299", "145299", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment even thread-even depth-1" id="comment-148132">
+<span class="comment_num"><a href="#comment-148132" title="Permalink to this comment" rel="nofollow">15</a></span>
+<span class="comment_author">Tricky</span>
+<span class="comment_time">April 15, 2009</span>
+
+					</dt>
+					<dd class="comment even thread-even depth-1">
+<div class="format_text" id="comment-body-148132">
+<p>Lol. Came back here to figure out how I did that thing ^^ before. :D</p>
+<p>… and realised I hadn’t explained properly:<br>
+the authorized_keys2 file can contain multiple keys. By using scp, you 
+might overwrite any previously-placed keys with a single key. By 
+appending (using the &gt;&gt;) you specifically add your key to the end 
+of the authorized_keys2 file and you won’t lose any previous keys.</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=148132#respond" onclick='return addComment.moveForm("comment-body-148132", "148132", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment odd alt thread-odd thread-alt depth-1" id="comment-148268">
+<span class="comment_num"><a href="#comment-148268" title="Permalink to this comment" rel="nofollow">16</a></span>
+<span class="comment_author">sandip</span>
+<span class="comment_time">April 23, 2009</span>
+
+					</dt>
+					<dd class="comment odd alt thread-odd thread-alt depth-1">
+<div class="format_text" id="comment-body-148268">
+<p>hi<br>
+i hav did as u mentioned abow but it wont  work it is asking for the passwd</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=148268#respond" onclick='return addComment.moveForm("comment-body-148268", "148268", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment even thread-even depth-1" id="comment-148752">
+<span class="comment_num"><a href="#comment-148752" title="Permalink to this comment" rel="nofollow">17</a></span>
+<span class="comment_author">hari</span>
+<span class="comment_time">May 29, 2009</span>
+
+					</dt>
+					<dd class="comment even thread-even depth-1">
+<div class="format_text" id="comment-body-148752">
+<p>Hi,</p>
+<p>Please  run # passwd -d login_name  for each user and<br>
+then check.</p>
+<p>regards<br>
+hari</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=148752#respond" onclick='return addComment.moveForm("comment-body-148752", "148752", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment odd alt thread-odd thread-alt depth-1" id="comment-148926">
+<span class="comment_num"><a href="#comment-148926" title="Permalink to this comment" rel="nofollow">18</a></span>
+<span class="comment_author">Rajesh</span>
+<span class="comment_time">June 12, 2009</span>
+
+					</dt>
+					<dd class="comment odd alt thread-odd thread-alt depth-1">
+<div class="format_text" id="comment-body-148926">
+<p>HI Vivek,</p>
+<p>Your article on SSH is very nice.  It very helpfull for us.  </p>
+<p>Keep  doing the great work</p>
+<p>Regards,<br>
+Rajesh</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=148926#respond" onclick='return addComment.moveForm("comment-body-148926", "148926", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment even thread-even depth-1 parent" id="comment-150572">
+<span class="comment_num"><a href="#comment-150572" title="Permalink to this comment" rel="nofollow">19</a></span>
+<span class="comment_author">sreekar</span>
+<span class="comment_time">September 8, 2009</span>
+
+					</dt>
+					<dd class="comment even thread-even depth-1 parent">
+<div class="format_text" id="comment-body-150572">
+<p>sir,<br>
+your article is very educational. i also referred your tutorial on shell
+ scripting. The way you write in simple language makes a difficult 
+concept also understandable. I think this is a trait of all Indian 
+writers.</p>
+<p>thank you for the good work</p>
+<p>sincerely,<br>
+sreekar</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=150572#respond" onclick='return addComment.moveForm("comment-body-150572", "150572", "respond", "566")'>Reply</a></p>
+</div>
+					<dl class="children">
+					<dt class="comment byuser comment-author-administrator bypostauthor odd alt depth-2" id="comment-150579">
+<span class="comment_num"><a href="#comment-150579" title="Permalink to this comment" rel="nofollow">20</a></span>
+<span class="comment_author">Vivek Gite</span>
+<span class="comment_time">September 9, 2009</span>
+
+					</dt>
+					<dd class="comment byuser comment-author-administrator bypostauthor odd alt depth-2">
+<div class="format_text" id="comment-body-150579">
+<p>@Sreekar,</p>
+<p>Thanks for feedback! </p>
+<p>I’m glad to know this site helped you to understand Linux and shell scripting.</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=150579#respond" onclick='return addComment.moveForm("comment-body-150579", "150579", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					</dl>
+					</dd>
+					<dt class="comment even thread-odd thread-alt depth-1" id="comment-151144">
+<span class="comment_num"><a href="#comment-151144" title="Permalink to this comment" rel="nofollow">21</a></span>
+<span class="comment_author">Wanga</span>
+<span class="comment_time">October 22, 2009</span>
+
+					</dt>
+					<dd class="comment even thread-odd thread-alt depth-1">
+<div class="format_text" id="comment-body-151144">
+<p>Am not able to login into another computer even after installing ssh on both computers.<br>
+It tells me the permission denied ,please try again and when i try again it doesnt log in.<br>
+And yet other people are able to use ssh comfortably. My computer is also uptodate</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=151144#respond" onclick='return addComment.moveForm("comment-body-151144", "151144", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment odd alt thread-even depth-1" id="comment-151161">
+<span class="comment_num"><a href="#comment-151161" title="Permalink to this comment" rel="nofollow">22</a></span>
+<span class="comment_author">Tricky</span>
+<span class="comment_time">October 22, 2009</span>
+
+					</dt>
+					<dd class="comment odd alt thread-even depth-1">
+<div class="format_text" id="comment-body-151161">
+<p>Hi Wanga</p>
+<p>Likely you have not got the ssh daemon running on the computer you 
+want to connect to, though there could be many other reasons it is not 
+working. Could you paste any error messages you might be getting when 
+you try to connect?</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=151161#respond" onclick='return addComment.moveForm("comment-body-151161", "151161", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment even thread-odd thread-alt depth-1" id="comment-152806">
+<span class="comment_num"><a href="#comment-152806" title="Permalink to this comment" rel="nofollow">23</a></span>
+<span class="comment_author">crazyswap</span>
+<span class="comment_time">January 9, 2010</span>
+
+					</dt>
+					<dd class="comment even thread-odd thread-alt depth-1">
+<div class="format_text" id="comment-body-152806">
+<p>I can’t log into my server,it shows network error:connection time out.kindly help.</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=152806#respond" onclick='return addComment.moveForm("comment-body-152806", "152806", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment odd alt thread-even depth-1" id="comment-152814">
+<span class="comment_num"><a href="#comment-152814" title="Permalink to this comment" rel="nofollow">24</a></span>
+<span class="comment_author">Tricky</span>
+<span class="comment_time">January 9, 2010</span>
+
+					</dt>
+					<dd class="comment odd alt thread-even depth-1">
+<div class="format_text" id="comment-body-152814">
+<p>Hi crazyswap</p>
+<p>Try running a tcptraceroute (<a href="http://en.wikipedia.org/wiki/Tcptraceroute" rel="nofollow">http://en.wikipedia.org/wiki/Tcptraceroute</a>) to your server to confirm that the problem is not the network:<br>
+tcptraceroute server.name.or.ip 22</p>
+<p>You may need to install tcptraceroute.</p>
+<p>If tcptraceroute fails only on the last step then it is likely that 
+the ssh service is not running on the server. If your server is under 
+paid hosting, contact your hosting provider to find out what the cause 
+is.</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=152814#respond" onclick='return addComment.moveForm("comment-body-152814", "152814", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment even thread-odd thread-alt depth-1 parent" id="comment-155490">
+<span class="comment_num"><a href="#comment-155490" title="Permalink to this comment" rel="nofollow">25</a></span>
+<span class="comment_author">Barun</span>
+<span class="comment_time">May 1, 2010</span>
+
+					</dt>
+					<dd class="comment even thread-odd thread-alt depth-1 parent">
+<div class="format_text" id="comment-body-155490">
+<p>Hi Vivek,</p>
+<p>Is there any way to skip typing in the passphrase while login through
+ ssh? For example, some cron jobs run daily, which open ssh sessions to 
+remote machines to do something. Even to have ‘ssh-add’ executed, we 
+need to provide the passphrase.</p>
+<p>~ Barun.</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=155490#respond" onclick='return addComment.moveForm("comment-body-155490", "155490", "respond", "566")'>Reply</a></p>
+</div>
+					<dl class="children">
+					<dt class="comment byuser comment-author-administrator bypostauthor odd alt depth-2 parent" id="comment-155510">
+<span class="comment_num"><a href="#comment-155510" title="Permalink to this comment" rel="nofollow">26</a></span>
+<span class="comment_author">Vivek Gite</span>
+<span class="comment_time">May 3, 2010</span>
+
+					</dt>
+					<dd class="comment byuser comment-author-administrator bypostauthor odd alt depth-2 parent">
+<div class="format_text" id="comment-body-155510">
+<p>Try <a href="http://www.cyberciti.biz/faq/ssh-passwordless-login-with-keychain-for-scripts/" rel="nofollow">keychain</a></p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=155510#respond" onclick='return addComment.moveForm("comment-body-155510", "155510", "respond", "566")'>Reply</a></p>
+</div>
+					<dl class="children">
+					<dt class="comment even depth-3 parent" id="comment-155519">
+<span class="comment_num"><a href="#comment-155519" title="Permalink to this comment" rel="nofollow">27</a></span>
+<span class="comment_author">Tricky</span>
+<span class="comment_time">May 3, 2010</span>
+
+					</dt>
+					<dd class="comment even depth-3 parent">
+<div class="format_text" id="comment-body-155519">
+<p>I’m not sure if keychain would work for ssh sessions created by 
+cronjob while you’re not logged in. A passphraseless key would work in 
+that case except that passphraseless keys are not so good. What you 
+could do is limit a separate passphraseless key to only be able to 
+execute a single command:</p>
+<p>Add a separate key to the authorized_keys file but start the line of 
+the key with the command that will be run remotely. For example if you 
+want to remotely execute a script called /usr/local/bin/cronjob1, put 
+the key in as:<br>
+command=”/usr/local/bin/cronjob1″ ssh-rsa AF899EDC23…..rest-of-key…..A3C== cronjob_description@my-desktop</p>
+<p>Then in the cronjob, ensure that the ssh session specifies that you want to use a non-default ssh key with “-i”:<br>
+0 22 * * * /usr/bin/ssh -i /home/user/.ssh/cronjob1id_rsa user@server “/usr/local/bin/cronjob1″</p>
+<p>When the new key is used, the server will always execute the cronjob1
+ script even if you specify a different command. This can be useful in 
+other ways however I think this is getting towards tutorial territory. 
+;)</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=155519#respond" onclick='return addComment.moveForm("comment-body-155519", "155519", "respond", "566")'>Reply</a></p>
+</div>
+					<dl class="children">
+					<dt class="comment byuser comment-author-administrator bypostauthor odd alt depth-4 parent" id="comment-155520">
+<span class="comment_num"><a href="#comment-155520" title="Permalink to this comment" rel="nofollow">28</a></span>
+<span class="comment_author">Vivek Gite</span>
+<span class="comment_time">May 3, 2010</span>
+
+					</dt>
+					<dd class="comment byuser comment-author-administrator bypostauthor odd alt depth-4 parent">
+<div class="format_text" id="comment-body-155520">
+<p><em>&gt; I’m not sure if keychain would work for ssh sessions created by cronjob while you’re not logged in. </em><br>
+Why not? We have live backup server that pulls data from 20 Linux 
+servers using rsnapshots. rsnapshots is called from cronjobs, all you’ve
+ to do is in your backup script:</p>
+<pre>#!/bin/bash
+# get keys for ssh, rsync, rsnapshot
+/usr/bin/keychain /root/.ssh/id_dsa
+
+# start backup
+rsync source dest...</pre>
+<p>All my backup server ssh keys are protected and server generally don’t go offline. I’ve the following in /root/.bash_profile</p>
+<pre>/usr/bin/keychain --clear $HOME/.ssh/id_dsa</pre>
+<p>The –clear option is very handy as it allows cron job to do password 
+less login but all users including an intruder must provide a 
+passphrase-key for interactive login.</p>
+<p>HTH</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=155520#respond" onclick='return addComment.moveForm("comment-body-155520", "155520", "respond", "566")'>Reply</a></p>
+</div>
+					<dl class="children">
+					<dt class="comment even depth-5" id="comment-155524">
+<span class="comment_num"><a href="#comment-155524" title="Permalink to this comment" rel="nofollow">29</a></span>
+<span class="comment_author">Tricky</span>
+<span class="comment_time">May 3, 2010</span>
+
+					</dt>
+					<dd class="comment even depth-5">
+<div class="format_text" id="comment-body-155524">
+<p>&gt; &gt; I’m not sure if keychain would work for ssh sessions created by cronjob while you’re not logged in.<br>
+&gt; Why not?<br>
+Maybe should have been more specific – I’m referring to keys which have a
+ passphrase as these keys cannot be used non-interactively.</p>
+<p>I do like the –clear now that you’ve made me aware of it. :)</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=155524#respond" onclick='return addComment.moveForm("comment-body-155524", "155524", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					</dl>
+					</dd>
+					</dl>
+					</dd>
+					</dl>
+					</dd>
+					</dl>
+					</dd>
+					<dt class="comment odd alt thread-even depth-1" id="comment-168544">
+<span class="comment_num"><a href="#comment-168544" title="Permalink to this comment" rel="nofollow">30</a></span>
+<span class="comment_author">sakthi</span>
+<span class="comment_time">February 3, 2011</span>
+
+					</dt>
+					<dd class="comment odd alt thread-even depth-1">
+<div class="format_text" id="comment-body-168544">
+<p>WE have a script which tries to scp to the same machine<br>
+machine1&gt;&gt; scp -r user@machine1:fromdir todir<br>
+As the keys are not inplace it is prompting for password. Is there any 
+way we could automate this part by generating keys?. I would appreciate 
+if you could give me the steps to perform the ssh.</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=168544#respond" onclick='return addComment.moveForm("comment-body-168544", "168544", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+					<dt class="comment even thread-odd thread-alt depth-1" id="comment-172411">
+<span class="comment_num"><a href="#comment-172411" title="Permalink to this comment" rel="nofollow">31</a></span>
+<span class="comment_author">Allen Cohen</span>
+<span class="comment_time">July 12, 2011</span>
+
+					</dt>
+					<dd class="comment even thread-odd thread-alt depth-1">
+<div class="format_text" id="comment-body-172411">
+<p>I’ve used your method to ssh without a password for a non-root user, say “user”.  This works as long as I’m logged in as “user”.<br>
+But if I run as root, the following still asks for “user”‘s password.<br>
+i.e.: the following works w/o a password:<br>
+su – user<br>
+ssh host date<br>
+But the following asks to the password of “user”:<br>
+su – root<br>
+ssh user@host date</p>
+<p class="reply"><a class="comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html?replytocom=172411#respond" onclick='return addComment.moveForm("comment-body-172411", "172411", "respond", "566")'>Reply</a></p>
+</div>
+					</dd>
+				</dl>
+				<div id="respond">
+					<div id="respond_intro">
+<a rel="nofollow" id="cancel-comment-reply-link" href="http://www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html#respond" style="display: none;">Cancel reply</a>						<p>Leave a Comment</p>
+					</div>
+					<form action="http://www.cyberciti.biz/tips/wp-comments-post.php" method="post" id="commentform">
+						<p><input class="text_input" name="author" id="author" tabindex="1" aria-required="true" type="text"><label for="author">Name <span class="required" title="Required">*</span></label></p>
+						<p><input class="text_input" name="email" id="email" tabindex="2" aria-required="true" type="text"><label for="email">E-mail <span class="required" title="Required">*</span></label></p>
+						<p><input class="text_input" name="url" id="url" tabindex="3" type="text"><label for="url">Website</label></p>
+						<p class="comment_box">
+							<textarea name="comment" id="comment" tabindex="4" cols="40" rows="8"></textarea>
+						</p>
+<span class="allowed"><span>
+<em>You can use these <acronym title="HyperText Markup Language">HTML</acronym> tags and attributes for your code and commands:</em> &lt;strong&gt; &lt;em&gt; &lt;ol&gt; &lt;li&gt; &lt;u&gt; &lt;ul&gt; &lt;blockquote&gt; &lt;pre&gt; &lt;a href="" title=""&gt; 
+</span></span>
+
+
+	<p style="clear: both;" class="subscribe-to-comments">
+	<input name="subscribe" id="subscribe" value="subscribe" style="width: auto;" type="checkbox">
+	<label for="subscribe">Notify me of followup comments via e-mail.</label>
+	</p>
+
+
+						<p class="remove_bottom_margin">
+							<input name="submit" class="form_submit" id="submit" tabindex="5" value="Submit" type="submit">
+<input name="comment_post_ID" value="566" id="comment_post_ID" type="hidden">
+<input name="comment_parent" id="comment_parent" value="0" type="hidden">
+						</p>
+<p style="display: none;"><input id="akismet_comment_nonce" name="akismet_comment_nonce" value="e6f79d84ec" type="hidden"></p><br><br><center><div id="adslargerectbottom"><div id="load-adslargerectbottom">
+<script type="text/javascript"><!--// <![CDATA[
+    OA_show(16);
+// ]]> --></script><noscript><a target='_blank' href='http://simplyguide.com/k/www/delivery/ck.php?n=31a572a'><img border='0' alt='' src='http://simplyguide.com/k/www/delivery/avw.php?zoneid=16&amp;n=31a572a' /></a></noscript>
+</div></div></center><br><small><p class="post_tags">Tagged as: <a href="http://www.cyberciti.biz/tips/tag/cryptographic-key" rel="tag">cryptographic key</a>, <a href="http://www.cyberciti.biz/tips/tag/freebsd" rel="tag">FreeBSD</a>, <a href="http://www.cyberciti.biz/tips/tag/keygen" rel="tag">keygen</a>, <a href="http://www.cyberciti.biz/tips/tag/linux" rel="tag">Linux</a>, <a href="http://www.cyberciti.biz/tips/tag/passphrase" rel="tag">passphrase</a>, <a href="http://www.cyberciti.biz/tips/tag/private-key" rel="tag">private key</a>, <a href="http://www.cyberciti.biz/tips/tag/public-key" rel="tag">public key</a>, <a href="http://www.cyberciti.biz/tips/tag/rsa" rel="tag">rsa</a>, <a href="http://www.cyberciti.biz/tips/tag/scp" rel="tag">scp</a>, <a href="http://www.cyberciti.biz/tips/tag/scp-command" rel="tag">scp command</a>, <a href="http://www.cyberciti.biz/tips/tag/ssh-connections" rel="tag">ssh connections</a>, <a href="http://www.cyberciti.biz/tips/tag/ssh-keys" rel="tag">ssh keys</a>, <a href="http://www.cyberciti.biz/tips/tag/ssh-add-command" rel="tag">ssh-add command</a>, <a href="http://www.cyberciti.biz/tips/tag/ssh-keygen-command" rel="tag">ssh-keygen command</a>, <a href="http://www.cyberciti.biz/tips/tag/unix" rel="tag">UNIX</a>, <a href="http://www.cyberciti.biz/tips/tag/unix-workstation" rel="tag">unix workstation</a>, <a href="http://www.cyberciti.biz/tips/tag/workstation-login" rel="tag">workstation login</a></p></small>					</form>
+				</div>
+			</div>
+					<div class="prev_next post_nav">
+						<p class="previous">Previous post: <a href="http://www.cyberciti.biz/tips/how-to-configure-cisco-router-using-linux-for-com-port-configuration.html" rel="prev">How to configure cisco router using linux for (COM port) configuration</a></p>
+						<p>Next post: <a href="http://www.cyberciti.biz/tips/freebsd-how-to-restart-inetd-servicedaemon.html" rel="next">FreeBSD How to restart inetd service / daemon</a></p>
+					</div>
+		</div>
+
+		<div id="sidebars">
+			<div id="multimedia_box" class="custom_box">
+				<div id="custom_box">
+<img style="vertical-align: middle; border: 0pt none;" src="ssh-public-key-based-authentication-how-to_files/emailsignup.png" alt="0" border="0"> Sign up for our daily email newsletter:<br><br>
+<form action="http://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open('http://feedburner.google.com/fb/a/mailverify?uri=Nixcraft-LinuxFreebsdSolarisTipsTricks', 'popupwindow', 'scrollbars=yes,width=550,height=520');return true">&nbsp;&nbsp;&nbsp;&nbsp;<input class="text_input" name="email" value="Enter your email address" id="name" onclick="if (this.value=='Enter your email address') {this.value=''};" onblur="if (this.value=='') {this.value='Enter your email address';}" type="text"><input value="Nixcraft-LinuxFreebsdSolarisTipsTricks" name="uri" type="hidden">
+<input name="loc" value="en_US" type="hidden"><input value="Sign Up" class="form_submit" onclick="javascript: pageTracker._trackPageview('/outgoing/email/signup/tips/top-right/');" type="submit"></form>
+
+				</div>
+			</div>
+			<div id="sidebar_1" class="sidebar">
+				<ul class="sidebar_list">
+<li class="widget widget_text" id="text-3">			<div class="textwidget"><div id="adstoprect"><div id="load-adstoprect">
+<script type="text/javascript"><!--// <![CDATA[
+    OA_show(3);
+// ]]> --></script><span><script type="text/javascript"><!--// <![CDATA[
+/* openads=http://simplyguide.com/k/www/delivery bannerid=8 zoneid=6 source= */
+// ]]> --></script><script type="text/javascript"><!--
+google_ad_client = "ca-pub-7825705102693166";
+/* Cyberciti.biz-300x250 */
+google_ad_slot = "7895531150";
+google_ad_width = 300;
+google_ad_height = 250;
+//-->
+</script>
+<script type="text/javascript" src="ssh-public-key-based-authentication-how-to_files/show_ads.js">
+</script><ins style="display:inline-table;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px"><ins id="aswift_0_anchor" style="display:block;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px"><iframe allowtransparency="true" hspace="0" marginwidth="0" marginheight="0" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){i+='.call';setTimeout(h,0)}else if(h.match){i+='.nav';w.location.replace(h)}s.log&amp;&amp;s.log.push(i)}" vspace="0" id="aswift_0" name="aswift_0" style="left: 0pt; position: absolute; top: 0pt;" frameborder="0" height="250" scrolling="no" width="300"></iframe></ins></ins><script type="text/javascript" src="ssh-public-key-based-authentication-how-to_files/ag.js"></script></span><div id="beacon_01a763ae17" style="position: absolute; left: 0px; top: 0px; visibility: hidden;"><img src="ssh-public-key-based-authentication-how-to_files/lg_002.gif" alt="" style="width: 0px; height: 0px;" height="0" width="0"></div>
+<noscript><a target='_blank' href='http://simplyguide.com/k/www/delivery/ck.php?n=27ef20f'><img border='0' alt='' src='http://simplyguide.com/k/www/delivery/avw.php?zoneid=3&amp;n=27ef20f' /></a></noscript>
+</div></div></div>
+		</li><li class="widget widget_text" id="text-4">			<div class="textwidget"><form action="http://www.cyberciti.biz/linux-search.php" id="cse-search-box">
+  <div>
+    <input name="cx" value="002165917076592449621:d37x4vctltg" type="hidden">
+    <input name="cof" value="FORID:11" type="hidden">
+    <input name="ie" value="UTF-8" type="hidden">
+    <input style="background: url(&quot;http://www.google.com/cse/intl/en/images/google_custom_search_watermark.gif&quot;) no-repeat scroll left center rgb(255, 255, 255);" name="q" size="27" type="text">
+    <input name="sa" value="Search" type="submit">
+
+  </div>
+<input value="www.cyberciti.biz/tips/ssh-public-key-based-authentication-how-to.html" name="siteurl" type="hidden"></form>
+<script type="text/javascript" src="ssh-public-key-based-authentication-how-to_files/brand"></script></div>
+		</li><li class="widget widget_text" id="text-5">			<div class="textwidget"><div id="adswhitepapers"><div id="load-adswhitepapers">
+<center>
+<script type="text/javascript"><!--// <![CDATA[
+    OA_show(8);
+// ]]> --></script><noscript><a target='_blank' href='http://simplyguide.com/k/www/delivery/ck.php?n=3d0a6f0'><img border='0' alt='' src='http://simplyguide.com/k/www/delivery/avw.php?zoneid=8&amp;n=3d0a6f0' /></a></noscript>
+</center>
+
+</div></div></div>
+		</li><li class="widget widget_text" id="text-6">			<div class="textwidget"><iframe src="ssh-public-key-based-authentication-how-to_files/likebox.html" style="border: medium none; overflow: hidden; width: 300px; height: 289px;" allowtransparency="true" frameborder="0" scrolling="no"></iframe></div>
+		</li><li class="widget widget_text" id="text-7">			<div class="textwidget"><div id="adsrightsky1"><div id="load-adsrightsky1">
+<script type="text/javascript"><!--// <![CDATA[
+    OA_show(17);
+// ]]> --></script><noscript><a target='_blank' href='http://simplyguide.com/k/www/delivery/ck.php?n=da585eb'><img border='0' alt='' src='http://simplyguide.com/k/www/delivery/avw.php?zoneid=17&amp;n=da585eb' /></a></noscript>
+</div></div></div>
+		</li><li class="widget widget_related_faq"><h3>Related Posts</h3><ul><li><a href="http://www.cyberciti.biz/tips/linux-multiple-ssh-key-based-authentication.html" rel="bookmark" title="Permanent Link: Howto use multiple SSH keys for password less login">Howto use multiple SSH keys for password less login</a></li><li><a href="http://www.cyberciti.biz/tips/how-to-setup-kerberized-authentication-of-windows-terminal-service.html" rel="bookmark" title="Permanent Link: How to Setup Kerberized authentication of Windows Terminal Service">How to Setup Kerberized authentication of Windows Terminal Service</a></li><li><a href="http://www.cyberciti.biz/tips/openssh-pki-support-coming-soon.html" rel="bookmark" title="Permanent Link: OpenSSH PKI support coming soon">OpenSSH PKI support coming soon</a></li></ul></li><div id="adsrightlargerect"><div id="load-adsrightlargerect">
+<script type="text/javascript"><!--// <![CDATA[
+    /* [id21] www.cyberciti.biz\/IDG\/Articles\/Large-300x600 (BF) */
+    OA_show(21);
+// ]]> --></script><noscript><a target='_blank' href='http://simplyguide.com/k/www/delivery/ck.php?n=616bac2'><img border='0' alt='' src='http://simplyguide.com/k/www/delivery/avw.php?zoneid=21&amp;n=616bac2' /></a></noscript>
+</div></div>				</ul>
+			</div>
+		</div>
+	</div>
+	<div id="footer">
+<div class="idglogo">
+            <img src="ssh-public-key-based-authentication-how-to_files/idg-logo-new.gif" alt="" border="0">
+	 </div><div class="copynotice">
+©2004-2011 nixCraft. All rights reserved. Cannot be reproduced without written permission. <br> 
+<a href="http://www.cyberciti.biz/tips/privacy">Privacy Policy</a> | 
+<a href="http://www.cyberciti.biz/tips/disclaimer">Terms of Service</a> |
+<a href="http://www.cyberciti.biz/tips/contact-us" title="Email us / Contact us">Questions or Comments</a> | 
+<a href="http://www.cyberciti.biz/tips/copyright" title="nixCraft copyright information">Copyright Info</a> |
+<a href="http://www.cyberciti.biz/tips/sitemaps" title="nixCraft sitemap">Sitemap</a>
+</div>
+	</div>
+</div>
+</div>
+<!--[if lte IE 8]>
+<div id="ie_clear"></div>
+<![endif]-->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-108650-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<script type="text/javascript" src="ssh-public-key-based-authentication-how-to_files/jqads.js"></script>
+<script type="text/javascript" src="ssh-public-key-based-authentication-how-to_files/spcjs.js"></script><script type="text/javascript" src="ssh-public-key-based-authentication-how-to_files/spc.js"></script><script type="text/javascript" src="ssh-public-key-based-authentication-how-to_files/fl.js"></script>
+
+<script type="text/javascript">
+<!--
+  function rotatenixCraftads(nixcraftAds){
+    $("#load-ads" + nixcraftAds).appendTo('#ads' + nixcraftAds)
+  }
+//-->
+</script>
+
+<div style="display:none">
+
+</div>
+<script type="text/javascript">
+<!--
+rotatenixCraftads('topage');
+//-->
+</script>
+
+
+
+<div style="display:none">
+
+</div>
+<script type="text/javascript">
+<!--
+rotatenixCraftads('toprect');
+//-->
+</script>
+
+
+<div style="display:none">
+<div id="load-adstopvert">
+<!-- -->
+</div>
+</div>
+<script type="text/javascript">
+<!--
+rotatenixCraftads('topvert');
+//-->
+</script>
+
+<div style="display:none">
+
+</div>
+<script type="text/javascript">
+<!--
+rotatenixCraftads('whitepapers');
+//-->
+</script>
+
+<div style="display:none">
+<div id="load-adslargerect">
+<!-- -->
+</div>
+</div>
+<script type="text/javascript">
+<!--
+rotatenixCraftads('largerect');
+//-->
+</script>
+
+<div style="display:none">
+
+</div>
+<script type="text/javascript">
+<!--
+rotatenixCraftads('largerectbottom');
+//-->
+</script>
+
+
+<div style="display:none">
+
+</div>
+<script type="text/javascript">
+<!--
+rotatenixCraftads('rightsky1');
+//-->
+</script>
+<div style="display:none">
+
+</div> 
+<script type="text/javascript">
+<!--
+rotatenixCraftads('rightlargerect');
+//-->
+</script>
+
+</body></html>
